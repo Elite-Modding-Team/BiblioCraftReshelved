@@ -130,10 +130,7 @@ public class BlockArmorStand extends BiblioWoodBlock {
 		}
 		if (atilearmor != -1 && armortype >= 0 && armortype < 4) {
 			if (!playerArmor.isEmpty() && EnchantmentHelper.hasBindingCurse(playerArmor) && !player.isCreative()) return;
-			ItemStack standArmor = armorTile.getStackInSlot(atilearmor);// getArmor(atilearmor);
-
-			// Keep the two inventories independent. ItemStack is mutable, so sharing
-			// the object makes later damage or synchronisation mutate both slots.
+			ItemStack standArmor = armorTile.getStackInSlot(atilearmor);
 			ItemStack playerArmorCopy = playerArmor.isEmpty() ? ItemStack.EMPTY : playerArmor.copy();
 			ItemStack standArmorCopy = standArmor.isEmpty() ? ItemStack.EMPTY : standArmor.copy();
 			player.inventory.setInventorySlotContents(36 + armortype, standArmorCopy);

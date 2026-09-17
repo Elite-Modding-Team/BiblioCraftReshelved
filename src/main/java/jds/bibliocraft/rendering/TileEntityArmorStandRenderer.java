@@ -59,8 +59,6 @@ public class TileEntityArmorStandRenderer extends TileEntitySpecialRenderer
 					}
 					default:break;
 				}
-				// Render copies so the client-only fake player never shares mutable
-				// stacks with the tile entity.
 				steve.inventory.armorInventory.set(3, copyStack(stand.getStackInSlot(0)));
 				steve.inventory.armorInventory.set(2, copyStack(stand.getStackInSlot(1)));
 				steve.inventory.armorInventory.set(1, copyStack(stand.getStackInSlot(2)));
@@ -87,7 +85,7 @@ public class TileEntityArmorStandRenderer extends TileEntitySpecialRenderer
 		        GlStateManager.disableBlend();
 				GlStateManager.popMatrix();
 				
-				// TODO the glint effect on the armor stand doesn't work yet.
+				// TODO: The glint effect on the armor stand doesn't work yet.
 				//GlStateManager.pushMatrix();
 				//GlStateManager.translate(tile.getPos().getX() + 0.5, tile.getPos().getY() + 0.06, tile.getPos().getZ() + 0.5);
 				//GlStateManager.enableLighting();
@@ -125,17 +123,14 @@ public class TileEntityArmorStandRenderer extends TileEntitySpecialRenderer
 		private ArmorOnlyRenderPlayer(RenderManager renderManager)
 		{
 			super(renderManager);
-			// RenderPlayer normally also renders the fake player's skin, held item,
-			// cape and other layers. Armor stands only need the armor layer.
 			this.layerRenderers.clear();
 			this.addLayer(new ArmorOnlyLayer(this));
 		}
 
 		@Override
 		protected void renderModel(AbstractClientPlayer entity, float limbSwing, float limbSwingAmount,
-				float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
+                                   float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
 		{
-			// RenderLivingBase invokes armor layers after this method.
 		}
 
 		@Override
@@ -158,8 +153,7 @@ public class TileEntityArmorStandRenderer extends TileEntitySpecialRenderer
 		}
 
 		@Override
-		protected ModelBiped getArmorModelHook(EntityLivingBase entity, ItemStack itemStack,
-				EntityEquipmentSlot slot, ModelBiped model)
+		protected ModelBiped getArmorModelHook(EntityLivingBase entity, ItemStack itemStack, EntityEquipmentSlot slot, ModelBiped model)
 		{
 			if (entity instanceof AbtractSteve)
 			{

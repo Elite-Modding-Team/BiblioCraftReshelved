@@ -23,11 +23,9 @@ public class GuiBiblioTextField extends Gui
     private final int xPos;
     private final int yPos;
 
-    /** The width of this text field. */
     private final int width;
     private final int height;
 
-    /** Have the current text beign edited on the textbox. */
     private String text = "";
     private int maxStringLength = 32;
     private int maxStringPixelWidth = Integer.MAX_VALUE;
@@ -35,7 +33,7 @@ public class GuiBiblioTextField extends Gui
     private boolean enableBackgroundDrawing = true;
 
     /**
-     * if true the textbox can lose focus by clicking elsewhere on the screen
+     * if true the textbox can lose focus by clicking elsewhere on the screen.
      */
     private boolean canLoseFocus = true;
 
@@ -55,12 +53,12 @@ public class GuiBiblioTextField extends Gui
     private int lineScrollOffset;
     private int cursorPosition;
 
-    /** other selection position, maybe the same as the cursor */
+    /** Other selection position, maybe the same as the cursor. */
     private int selectionEnd;
     private int enabledColor = 14737632;
     private int disabledColor = 7368816;
 
-    /** True if this textbox is visible */
+    /** True if this textbox is visible. */
     private boolean visible = true;
     private boolean centered;
     
@@ -75,7 +73,7 @@ public class GuiBiblioTextField extends Gui
 	}
 	
     /**
-     * Increments the cursor counter
+     * Increments the cursor counter.
      */
     public void updateCursorCounter()
     {
@@ -125,23 +123,23 @@ public class GuiBiblioTextField extends Gui
     }
 
     /**
-     * @return returns the text between the cursor and selectionEnd
+     * @return returns the text between the cursor and selectionEnd.
      */
     public String getSelectedtext()
     {
-        int i = this.cursorPosition < this.selectionEnd ? this.cursorPosition : this.selectionEnd;
-        int j = this.cursorPosition < this.selectionEnd ? this.selectionEnd : this.cursorPosition;
+        int i = Math.min(this.cursorPosition, this.selectionEnd);
+        int j = Math.max(this.cursorPosition, this.selectionEnd);
         return this.text.substring(i, j);
     }
 
     /**
-     * replaces selected text, or inserts text at the position on the cursor
+     * Replaces selected text, or inserts text at the position on the cursor.
      */
     public void writeText(String par1Str)
     {
         String s2 = ChatAllowedCharacters.filterAllowedCharacters(par1Str);
-        int i = this.cursorPosition < this.selectionEnd ? this.cursorPosition : this.selectionEnd;
-        int j = this.cursorPosition < this.selectionEnd ? this.selectionEnd : this.cursorPosition;
+        int i = Math.min(this.cursorPosition, this.selectionEnd);
+        int j = Math.max(this.cursorPosition, this.selectionEnd);
         String before = this.text.substring(0, i);
         String after = this.text.substring(j);
         int availableCharacters = Math.max(0, this.maxStringLength - before.length() - after.length());
@@ -168,7 +166,7 @@ public class GuiBiblioTextField extends Gui
      */
     public void deleteWords(int par1)
     {
-        if (this.text.length() != 0)
+        if (!this.text.isEmpty())
         {
             if (this.selectionEnd != this.cursorPosition)
             {
@@ -182,11 +180,11 @@ public class GuiBiblioTextField extends Gui
     }
 
     /**
-     * delete the selected text, otherwsie deletes characters from either side of the cursor. params: delete num
+     * Delete the selected text, otherwise deletes characters from either side of the cursor. Params: delete num
      */
     public void deleteFromCursor(int par1)
     {
-        if (this.text.length() != 0)
+        if (!this.text.isEmpty())
         {
             if (this.selectionEnd != this.cursorPosition)
             {
@@ -220,7 +218,7 @@ public class GuiBiblioTextField extends Gui
     }
 
     /**
-     * see @getNthNextWordFromPos() params: N, position
+     * See @getNthNextWordFromPos() params: N, position.
      */
     public int getNthWordFromCursor(int par1)
     {
@@ -228,7 +226,7 @@ public class GuiBiblioTextField extends Gui
     }
 
     /**
-     * gets the position of the nth word. N may be negative, then it looks backwards. params: N, position
+     * Gets the position of the nth word. N may be negative, then it looks backwards. Params: N, position
      */
     public int getNthWordFromPos(int par1, int par2)
     {
@@ -278,7 +276,7 @@ public class GuiBiblioTextField extends Gui
     }
 
     /**
-     * Moves the text cursor by a specified number of characters and clears the selection
+     * Moves the text cursor by a specified number of characters and clears the selection.
      */
     public void moveCursorBy(int par1)
     {
@@ -286,7 +284,7 @@ public class GuiBiblioTextField extends Gui
     }
 
     /**
-     * sets the position of the cursor to the provided index
+     * Sets the position of the cursor to the provided index.
      */
     public void setCursorPosition(int par1)
     {
@@ -307,7 +305,7 @@ public class GuiBiblioTextField extends Gui
     }
 
     /**
-     * sets the cursors position to the beginning
+     * Sets the cursors position to the beginning.
      */
     public void setCursorPositionZero()
     {
@@ -315,7 +313,7 @@ public class GuiBiblioTextField extends Gui
     }
 
     /**
-     * sets the cursors position to after the text
+     * Sets the cursors position to after the text
      */
     public void setCursorPositionEnd()
     {
@@ -525,7 +523,7 @@ public class GuiBiblioTextField extends Gui
                 k = s.length();
             }
 
-            if (s.length() > 0)
+            if (!s.isEmpty())
             {
                 String s1 = flag ? s.substring(0, j) : s;
                 j1 = this.fontRenderer.drawString(s1, l, i1, i);  //drawString
@@ -545,7 +543,7 @@ public class GuiBiblioTextField extends Gui
                 --j1;
             }
 
-            if (s.length() > 0 && flag && j < s.length())
+            if (!s.isEmpty() && flag && j < s.length())
             {
                 this.fontRenderer.drawString(s.substring(j), j1, i1, i);
             }
@@ -596,7 +594,7 @@ public class GuiBiblioTextField extends Gui
         }
 
         int cursorX = textX;
-        if (visibleText.length() > 0)
+        if (!visibleText.isEmpty())
         {
             String beforeCursor = cursorVisible ? visibleText.substring(0, visibleCursor) : visibleText;
             cursorX = this.fontRenderer.drawString(beforeCursor, textX, textY, color);
@@ -655,10 +653,10 @@ public class GuiBiblioTextField extends Gui
         GlStateManager.enableColorLogic();
         GlStateManager.colorLogicOp(5387);
         worldrenderer.begin(7, DefaultVertexFormats.POSITION);
-        worldrenderer.pos((double)par1, (double)par4, 0.0D).endVertex();
-        worldrenderer.pos((double)par3, (double)par4, 0.0D).endVertex();
-        worldrenderer.pos((double)par3, (double)par2, 0.0D).endVertex();
-        worldrenderer.pos((double)par1, (double)par2, 0.0D).endVertex();
+        worldrenderer.pos(par1, par4, 0.0D).endVertex();
+        worldrenderer.pos(par3, par4, 0.0D).endVertex();
+        worldrenderer.pos(par3, par2, 0.0D).endVertex();
+        worldrenderer.pos(par1, par2, 0.0D).endVertex();
         tessellator.draw();
         GlStateManager.disableColorLogic();
         GlStateManager.enableTexture2D();
@@ -684,7 +682,7 @@ public class GuiBiblioTextField extends Gui
     }
 
     /**
-     * returns the maximum number of character that can be contained in this textbox
+     * Returns the maximum number of character that can be contained in this textbox.
      */
     public int getMaxStringLength()
     {
@@ -692,7 +690,7 @@ public class GuiBiblioTextField extends Gui
     }
 
     /**
-     * returns the current position of the cursor
+     * Returns the current position of the cursor.
      */
     public int getCursorPosition()
     {
@@ -700,7 +698,7 @@ public class GuiBiblioTextField extends Gui
     }
 
     /**
-     * get enable drawing background and outline
+     * Gets the enable drawing background and outline.
      */
     public boolean getEnableBackgroundDrawing()
     {
@@ -708,7 +706,7 @@ public class GuiBiblioTextField extends Gui
     }
 
     /**
-     * enable drawing background and outline
+     * Enables the drawing background and outline.
      */
     public void setEnableBackgroundDrawing(boolean par1)
     {
@@ -716,7 +714,7 @@ public class GuiBiblioTextField extends Gui
     }
 
     /**
-     * Sets the text colour for this textbox (disabled text will not use this colour)
+     * Sets the text color for this textbox (disabled text will not use this color).
      */
     public void setTextColor(int par1)
     {
@@ -735,7 +733,7 @@ public class GuiBiblioTextField extends Gui
     }
 
     /**
-     * setter for the focused field
+     * Setter for the focused field.
      */
     public void setFocused(boolean par1)
     {
@@ -748,7 +746,7 @@ public class GuiBiblioTextField extends Gui
     }
 
     /**
-     * getter for the focused field
+     * Getter for the focused field.
      */
     public boolean isFocused()
     {
@@ -761,7 +759,7 @@ public class GuiBiblioTextField extends Gui
     }
 
     /**
-     * the side of the selection that is not the cursor, maye be the same as the cursor
+     * The side of the selection that is not the cursor, maybe be the same as the cursor.
      */
     public int getSelectionEnd()
     {
@@ -769,7 +767,7 @@ public class GuiBiblioTextField extends Gui
     }
 
     /**
-     * returns the width of the textbox depending on if the the box is enabled
+     * Teturns the width of the textbox depending on if the box is enabled.
      */
     public int getWidth()
     {
@@ -777,7 +775,7 @@ public class GuiBiblioTextField extends Gui
     }
 
     /**
-     * Sets the position of the selection anchor (i.e. position the selection was started at)
+     * Sets the position of the selection anchor (e.g. position the selection was started at).
      */
     public void setSelectionPos(int par1)
     {
@@ -833,7 +831,7 @@ public class GuiBiblioTextField extends Gui
     }
 
     /**
-     * if true the textbox can lose focus by clicking elsewhere on the screen
+     * If true the textbox can lose focus by clicking elsewhere on the screen.
      */
     public void setCanLoseFocus(boolean par1)
     {
@@ -841,7 +839,7 @@ public class GuiBiblioTextField extends Gui
     }
 
     /**
-     * @return {@code true} if this textbox is visible
+     * @return {@code true} if this textbox is visible.
      */
     public boolean getVisible()
     {
@@ -849,7 +847,7 @@ public class GuiBiblioTextField extends Gui
     }
 
     /**
-     * Sets whether or not this textbox is visible
+     * Sets whether this textbox is visible.
      */
     public void setVisible(boolean par1)
     {

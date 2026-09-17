@@ -7,21 +7,15 @@ import mezz.jei.api.IModRegistry;
 import mezz.jei.api.JEIPlugin;
 import net.minecraft.item.ItemStack;
 
-/** Keeps the implementation-only clipboard block out of JEI's ingredient list. */
+@SuppressWarnings("deprecation")
 @JEIPlugin
-public class BiblioCraftJeiPlugin implements IModPlugin
-{
+public class BiblioCraftJeiPlugin implements IModPlugin {
     @Override
-    public void register(IModRegistry registry)
-    {
-        if (!Config.enableClipboard)
-        {
+    public void register(IModRegistry registry) {
+        if (!Config.enableClipboard) {
             return;
         }
 
-        // The ingredient filter is not created until after mod plugins are registered.
-        // The blacklist is intentionally designed to be populated during this callback.
-        registry.getJeiHelpers().getItemBlacklist()
-                .addItemToBlacklist(new ItemStack(BlockItemClipboard.instance));
+        registry.getJeiHelpers().getItemBlacklist().addItemToBlacklist(new ItemStack(BlockItemClipboard.instance));
     }
 }

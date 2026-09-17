@@ -7,299 +7,326 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.util.Constants;
 
-public class TileEntityClipboard extends BiblioTileEntity
-{
-	public static final int MAX_PAGES = 50;
-	private static final int TASK_COUNT = 9;
-	public int button0state = 0;
-	public int button1state = 0;
-	public int button2state = 0;
-	public int button3state = 0;
-	public int button4state = 0;
-	public int button5state = 0;
-	public int button6state = 0;
-	public int button7state = 0;
-	public int button8state = 0;
-    
-	public String button0text = " ";
-	public String button1text = " ";
-	public String button2text = " ";
-	public String button3text = " ";
-	public String button4text = " ";
-	public String button5text = " ";
-	public String button6text = " ";
+public class TileEntityClipboard extends BiblioTileEntity {
+    public static final int MAX_PAGES = 50;
+    private static final int TASK_COUNT = 9;
+    public int button0state = 0;
+    public int button1state = 0;
+    public int button2state = 0;
+    public int button3state = 0;
+    public int button4state = 0;
+    public int button5state = 0;
+    public int button6state = 0;
+    public int button7state = 0;
+    public int button8state = 0;
+
+    public String button0text = " ";
+    public String button1text = " ";
+    public String button2text = " ";
+    public String button3text = " ";
+    public String button4text = " ";
+    public String button5text = " ";
+    public String button6text = " ";
     public String button7text = " ";
     public String button8text = " ";
     public String titletext = " ";
-    
+
     public int currentPage = 1;
     public int totalPages = 1;
-	
-	public TileEntityClipboard()
-	{
-		super(1, false);
-	}
-	
-	public void updateClipboardFromPlayerSelection(int selection)
-	{
-		if (selection >= 0 && selection <= 8)
-		{
-			checkCheckBox(selection);
-		}
-		else if (selection == 10)
-		{
-			// prev page
-			changePage(false);
-		}
-		else if (selection == 11)
-		{
-			// next page
-			changePage(true);
-		}
-		if (this.getWorld() != null)
-		{
-			this.getWorld().notifyBlockUpdate(getPos(), getWorld().getBlockState(getPos()), getWorld().getBlockState(getPos()), 3);
-		}
-	}
-	
-	public void checkCheckBox(int box)
-	{
-		switch (box)
-		{
-			case 0:{if (this.button0state >= 2){this.button0state = 0;}else{this.button0state++;} break;}
-			case 1:{if (this.button1state >= 2){this.button1state = 0;}else{this.button1state++;} break;}
-			case 2:{if (this.button2state >= 2){this.button2state = 0;}else{this.button2state++;} break;}
-			case 3:{if (this.button3state >= 2){this.button3state = 0;}else{this.button3state++;} break;}
-			case 4:{if (this.button4state >= 2){this.button4state = 0;}else{this.button4state++;} break;}
-			case 5:{if (this.button5state >= 2){this.button5state = 0;}else{this.button5state++;} break;}
-			case 6:{if (this.button6state >= 2){this.button6state = 0;}else{this.button6state++;} break;}
-			case 7:{if (this.button7state >= 2){this.button7state = 0;}else{this.button7state++;} break;}
-			case 8:{if (this.button8state >= 2){this.button8state = 0;}else{this.button8state++;} break;}
-		}
-		
-		ItemStack clipStack = getStackInSlot(0);
-		if (!clipStack.isEmpty())
-		{
-			NBTTagCompound cliptags = clipStack.getTagCompound();
-	    	if (cliptags != null)
-	    	{
-	    		NBTTagCompound pagetag = getOrCreatePage(cliptags, this.currentPage);
-	    		int[] taskstat = getTaskStates(pagetag);
-	    		taskstat[0] = this.button0state;
-	    		taskstat[1] = this.button1state;
-	    		taskstat[2] = this.button2state;
-	    		taskstat[3] = this.button3state;
-	    		taskstat[4] = this.button4state;
-	    		taskstat[5] = this.button5state;
-	    		taskstat[6] = this.button6state;
-	    		taskstat[7] = this.button7state;
-	    		taskstat[8] = this.button8state;
-	    		pagetag.setIntArray("taskStates", taskstat);
-	    		clipStack.setTagCompound(cliptags);
-	    		setInventorySlotContents(0, clipStack);
-	    		getNBTData();
-	    	}
-		}
-	}
-	
-	public void changePage(boolean nextPage)
-	{
-		ItemStack clipStack = getStackInSlot(0);
-		if (!clipStack.isEmpty())
-		{
-	    	NBTTagCompound cliptags = clipStack.getTagCompound();
-	    	if (cliptags == null)
-	    	{
-	    		return;
-	    	}
 
-	    	getNBTData();
-	    	int targetPage = nextPage ? this.currentPage + 1 : this.currentPage - 1;
-	    	if (targetPage < 1 || targetPage > MAX_PAGES)
-	    	{
-	    		return;
-	    	}
-
-	    	if (targetPage > this.totalPages)
-	    	{
-	    		this.totalPages = targetPage;
-	    	}
-	    	getOrCreatePage(cliptags, targetPage);
-	    	this.currentPage = targetPage;
-	    	cliptags.setInteger("currentPage", this.currentPage);
-	    	cliptags.setInteger("totalPages", this.totalPages);
-	    	clipStack.setTagCompound(cliptags);
-	    	setInventorySlotContents(0, clipStack);
-	    	getNBTData();
-		}
-	}
-	
-	public void getNBTData()
-    {
-		ItemStack clipStack = getStackInSlot(0);
-		if (!clipStack.isEmpty())
-		{
-	    	NBTTagCompound cliptags = clipStack.getTagCompound();
-	    	if (cliptags != null)
-	    	{
-	    	int savedTotalPages = cliptags.getInteger("totalPages");
-	    	this.totalPages = clampPage(savedTotalPages <= 0 ? 1 : savedTotalPages);
-	    	this.currentPage = clampPage(cliptags.getInteger("currentPage"));
-	    	if (this.currentPage > this.totalPages)
-	    	{
-	    		this.totalPages = this.currentPage;
-	    	}
-	    	NBTTagCompound pagetag = getOrCreatePage(cliptags, this.currentPage);
-	    	cliptags.setInteger("currentPage", this.currentPage);
-	    	cliptags.setInteger("totalPages", this.totalPages);
-
-	    	int[] taskstat = getTaskStates(pagetag);
-	    	this.button0state = taskstat[0];
-	    	this.button1state = taskstat[1];
-	    	this.button2state = taskstat[2];
-	    	this.button3state = taskstat[3];
-	    	this.button4state = taskstat[4];
-	    	this.button5state = taskstat[5];
-	    	this.button6state = taskstat[6];
-	    	this.button7state = taskstat[7];
-	    	this.button8state = taskstat[8];
-	    	NBTTagCompound tasks = pagetag.getCompoundTag("tasks");
-	    	this.button0text = tasks.getString("task1");
-	    	this.button1text = tasks.getString("task2");
-	    	this.button2text = tasks.getString("task3");
-	    	this.button3text = tasks.getString("task4");
-	    	this.button4text = tasks.getString("task5");
-	    	this.button5text = tasks.getString("task6");
-	    	this.button6text = tasks.getString("task7");
-	    	this.button7text = tasks.getString("task8");
-	    	this.button8text = tasks.getString("task9");
-	    	this.titletext = pagetag.getString("title");
-	    	}
-		}
+    public TileEntityClipboard() {
+        super(1, false);
     }
 
-	private int clampPage(int page)
-	{
-		return Math.max(1, Math.min(MAX_PAGES, page));
-	}
+    public void updateClipboardFromPlayerSelection(int selection) {
+        if (selection >= 0 && selection <= 8) {
+            checkCheckBox(selection);
+        } else if (selection == 10) {
+            // prev page
+            changePage(false);
+        } else if (selection == 11) {
+            // next page
+            changePage(true);
+        }
+        if (this.getWorld() != null) {
+            this.getWorld().notifyBlockUpdate(getPos(), getWorld().getBlockState(getPos()), getWorld().getBlockState(getPos()), 3);
+        }
+    }
 
-	private NBTTagCompound getOrCreatePage(NBTTagCompound clipboard, int pageNumber)
-	{
-		String pageName = "page" + clampPage(pageNumber);
-		if (!clipboard.hasKey(pageName, Constants.NBT.TAG_COMPOUND))
-		{
-			clipboard.setTag(pageName, createEmptyPage());
-		}
-		return clipboard.getCompoundTag(pageName);
-	}
+    public void checkCheckBox(int box) {
+        switch (box) {
+            case 0: {
+                if (this.button0state >= 2) {
+                    this.button0state = 0;
+                } else {
+                    this.button0state++;
+                }
+                break;
+            }
+            case 1: {
+                if (this.button1state >= 2) {
+                    this.button1state = 0;
+                } else {
+                    this.button1state++;
+                }
+                break;
+            }
+            case 2: {
+                if (this.button2state >= 2) {
+                    this.button2state = 0;
+                } else {
+                    this.button2state++;
+                }
+                break;
+            }
+            case 3: {
+                if (this.button3state >= 2) {
+                    this.button3state = 0;
+                } else {
+                    this.button3state++;
+                }
+                break;
+            }
+            case 4: {
+                if (this.button4state >= 2) {
+                    this.button4state = 0;
+                } else {
+                    this.button4state++;
+                }
+                break;
+            }
+            case 5: {
+                if (this.button5state >= 2) {
+                    this.button5state = 0;
+                } else {
+                    this.button5state++;
+                }
+                break;
+            }
+            case 6: {
+                if (this.button6state >= 2) {
+                    this.button6state = 0;
+                } else {
+                    this.button6state++;
+                }
+                break;
+            }
+            case 7: {
+                if (this.button7state >= 2) {
+                    this.button7state = 0;
+                } else {
+                    this.button7state++;
+                }
+                break;
+            }
+            case 8: {
+                if (this.button8state >= 2) {
+                    this.button8state = 0;
+                } else {
+                    this.button8state++;
+                }
+                break;
+            }
+        }
 
-	private int[] getTaskStates(NBTTagCompound page)
-	{
-		int[] storedStates = page.getIntArray("taskStates");
-		int[] taskStates = new int[TASK_COUNT];
-		System.arraycopy(storedStates, 0, taskStates, 0, Math.min(storedStates.length, TASK_COUNT));
-		page.setIntArray("taskStates", taskStates);
-		return taskStates;
-	}
+        ItemStack clipStack = getStackInSlot(0);
+        if (!clipStack.isEmpty()) {
+            NBTTagCompound cliptags = clipStack.getTagCompound();
+            if (cliptags != null) {
+                NBTTagCompound pagetag = getOrCreatePage(cliptags, this.currentPage);
+                int[] taskstat = getTaskStates(pagetag);
+                taskstat[0] = this.button0state;
+                taskstat[1] = this.button1state;
+                taskstat[2] = this.button2state;
+                taskstat[3] = this.button3state;
+                taskstat[4] = this.button4state;
+                taskstat[5] = this.button5state;
+                taskstat[6] = this.button6state;
+                taskstat[7] = this.button7state;
+                taskstat[8] = this.button8state;
+                pagetag.setIntArray("taskStates", taskstat);
+                clipStack.setTagCompound(cliptags);
+                setInventorySlotContents(0, clipStack);
+                getNBTData();
+            }
+        }
+    }
 
-	public static NBTTagCompound createEmptyPage()
-	{
-		NBTTagCompound page = new NBTTagCompound();
-		NBTTagCompound tasks = new NBTTagCompound();
-		page.setIntArray("taskStates", new int[TASK_COUNT]);
-		for (int i = 1; i <= TASK_COUNT; i++)
-		{
-			tasks.setString("task" + i, "");
-		}
-		page.setTag("tasks", tasks);
-		page.setString("title", "");
-		return page;
-	}
+    public void changePage(boolean nextPage) {
+        ItemStack clipStack = getStackInSlot(0);
+        if (!clipStack.isEmpty()) {
+            NBTTagCompound cliptags = clipStack.getTagCompound();
+            if (cliptags == null) {
+                return;
+            }
 
-	@Override
-	public int getInventoryStackLimit()
-	{
-		return 1;
-	}
-    
-	@Override
-	public boolean isItemValidForSlot(int slot, ItemStack itemstack)
-	{
-		return false;
-	}
+            getNBTData();
+            int targetPage = nextPage ? this.currentPage + 1 : this.currentPage - 1;
+            if (targetPage < 1 || targetPage > MAX_PAGES) {
+                return;
+            }
 
-	@Override
-	public String getName() 
-	{
-		return BlockClipboard.name;
-	}
+            if (targetPage > this.totalPages) {
+                this.totalPages = targetPage;
+            }
+            getOrCreatePage(cliptags, targetPage);
+            this.currentPage = targetPage;
+            cliptags.setInteger("currentPage", this.currentPage);
+            cliptags.setInteger("totalPages", this.totalPages);
+            clipStack.setTagCompound(cliptags);
+            setInventorySlotContents(0, clipStack);
+            getNBTData();
+        }
+    }
 
-	@Override
-	public void setInventorySlotContentsAdditionalCommands(int slot, ItemStack stack) 
-	{
-		if (slot == 0)
-		{
-			getNBTData();
-		}
-	}
+    public void getNBTData() {
+        ItemStack clipStack = getStackInSlot(0);
+        if (!clipStack.isEmpty()) {
+            NBTTagCompound cliptags = clipStack.getTagCompound();
+            if (cliptags != null) {
+                int savedTotalPages = cliptags.getInteger("totalPages");
+                this.totalPages = clampPage(savedTotalPages <= 0 ? 1 : savedTotalPages);
+                this.currentPage = clampPage(cliptags.getInteger("currentPage"));
+                if (this.currentPage > this.totalPages) {
+                    this.totalPages = this.currentPage;
+                }
+                NBTTagCompound pagetag = getOrCreatePage(cliptags, this.currentPage);
+                cliptags.setInteger("currentPage", this.currentPage);
+                cliptags.setInteger("totalPages", this.totalPages);
 
-	@Override
-	public void loadCustomNBTData(NBTTagCompound nbt) 
-	{
-		this.button0state = nbt.getInteger("button0state");
-		this.button1state = nbt.getInteger("button1state");
-		this.button2state = nbt.getInteger("button2state");
-		this.button3state = nbt.getInteger("button3state");
-		this.button4state = nbt.getInteger("button4state");
-		this.button5state = nbt.getInteger("button5state");
-		this.button6state = nbt.getInteger("button6state");
-		this.button7state = nbt.getInteger("button7state");
-		this.button8state = nbt.getInteger("button8state");
-		this.button0text = nbt.getString("button0text");
-		this.button1text = nbt.getString("button1text");
-		this.button2text = nbt.getString("button2text");
-		this.button3text = nbt.getString("button3text");
-		this.button4text = nbt.getString("button4text");
-		this.button5text = nbt.getString("button5text");
-		this.button6text = nbt.getString("button6text");
-		this.button7text = nbt.getString("button7text");
-		this.button8text = nbt.getString("button8text");
-		this.currentPage = nbt.getInteger("currentPage");
-		this.totalPages = nbt.getInteger("totalPages");
-		this.titletext = nbt.getString("titletext");
-	}
+                int[] taskstat = getTaskStates(pagetag);
+                this.button0state = taskstat[0];
+                this.button1state = taskstat[1];
+                this.button2state = taskstat[2];
+                this.button3state = taskstat[3];
+                this.button4state = taskstat[4];
+                this.button5state = taskstat[5];
+                this.button6state = taskstat[6];
+                this.button7state = taskstat[7];
+                this.button8state = taskstat[8];
+                NBTTagCompound tasks = pagetag.getCompoundTag("tasks");
+                this.button0text = tasks.getString("task1");
+                this.button1text = tasks.getString("task2");
+                this.button2text = tasks.getString("task3");
+                this.button3text = tasks.getString("task4");
+                this.button4text = tasks.getString("task5");
+                this.button5text = tasks.getString("task6");
+                this.button6text = tasks.getString("task7");
+                this.button7text = tasks.getString("task8");
+                this.button8text = tasks.getString("task9");
+                this.titletext = pagetag.getString("title");
+            }
+        }
+    }
 
-	@Override
-	public NBTTagCompound writeCustomNBTData(NBTTagCompound nbt) 
-	{
-		nbt.setInteger("button0state", this.button0state);
-    	nbt.setInteger("button1state", this.button1state);
-    	nbt.setInteger("button2state", this.button2state);
-    	nbt.setInteger("button3state", this.button3state);
-    	nbt.setInteger("button4state", this.button4state);
-    	nbt.setInteger("button5state", this.button5state);
-    	nbt.setInteger("button6state", this.button6state);
-    	nbt.setInteger("button7state", this.button7state);
-    	nbt.setInteger("button8state", this.button8state);
-    	nbt.setString("button0text", this.button0text);
-    	nbt.setString("button1text", this.button1text);
-    	nbt.setString("button2text", this.button2text);
-    	nbt.setString("button3text", this.button3text);
-    	nbt.setString("button4text", this.button4text);
-    	nbt.setString("button5text", this.button5text);
-    	nbt.setString("button6text", this.button6text);
-    	nbt.setString("button7text", this.button7text);
-    	nbt.setString("button8text", this.button8text);
-    	nbt.setInteger("currentPage", this.currentPage);
-    	nbt.setInteger("totalPages", this.totalPages);
-    	nbt.setString("titletext", this.titletext);
-		return nbt;
-	}
-	
-	@Override
-	public ITextComponent getDisplayName() 
-	{
-		ITextComponent chat = new TextComponentString(getName());
-		return chat;
-	}
+    private int clampPage(int page) {
+        return Math.max(1, Math.min(MAX_PAGES, page));
+    }
+
+    private NBTTagCompound getOrCreatePage(NBTTagCompound clipboard, int pageNumber) {
+        String pageName = "page" + clampPage(pageNumber);
+        if (!clipboard.hasKey(pageName, Constants.NBT.TAG_COMPOUND)) {
+            clipboard.setTag(pageName, createEmptyPage());
+        }
+        return clipboard.getCompoundTag(pageName);
+    }
+
+    private int[] getTaskStates(NBTTagCompound page) {
+        int[] storedStates = page.getIntArray("taskStates");
+        int[] taskStates = new int[TASK_COUNT];
+        System.arraycopy(storedStates, 0, taskStates, 0, Math.min(storedStates.length, TASK_COUNT));
+        page.setIntArray("taskStates", taskStates);
+        return taskStates;
+    }
+
+    public static NBTTagCompound createEmptyPage() {
+        NBTTagCompound page = new NBTTagCompound();
+        NBTTagCompound tasks = new NBTTagCompound();
+        page.setIntArray("taskStates", new int[TASK_COUNT]);
+        for (int i = 1; i <= TASK_COUNT; i++) {
+            tasks.setString("task" + i, "");
+        }
+        page.setTag("tasks", tasks);
+        page.setString("title", "");
+        return page;
+    }
+
+    @Override
+    public int getInventoryStackLimit() {
+        return 1;
+    }
+
+    @Override
+    public boolean isItemValidForSlot(int slot, ItemStack itemstack) {
+        return false;
+    }
+
+    @Override
+    public String getName() {
+        return BlockClipboard.name;
+    }
+
+    @Override
+    public void setInventorySlotContentsAdditionalCommands(int slot, ItemStack stack) {
+        if (slot == 0) {
+            getNBTData();
+        }
+    }
+
+    @Override
+    public void loadCustomNBTData(NBTTagCompound nbt) {
+        this.button0state = nbt.getInteger("button0state");
+        this.button1state = nbt.getInteger("button1state");
+        this.button2state = nbt.getInteger("button2state");
+        this.button3state = nbt.getInteger("button3state");
+        this.button4state = nbt.getInteger("button4state");
+        this.button5state = nbt.getInteger("button5state");
+        this.button6state = nbt.getInteger("button6state");
+        this.button7state = nbt.getInteger("button7state");
+        this.button8state = nbt.getInteger("button8state");
+        this.button0text = nbt.getString("button0text");
+        this.button1text = nbt.getString("button1text");
+        this.button2text = nbt.getString("button2text");
+        this.button3text = nbt.getString("button3text");
+        this.button4text = nbt.getString("button4text");
+        this.button5text = nbt.getString("button5text");
+        this.button6text = nbt.getString("button6text");
+        this.button7text = nbt.getString("button7text");
+        this.button8text = nbt.getString("button8text");
+        this.currentPage = nbt.getInteger("currentPage");
+        this.totalPages = nbt.getInteger("totalPages");
+        this.titletext = nbt.getString("titletext");
+    }
+
+    @Override
+    public NBTTagCompound writeCustomNBTData(NBTTagCompound nbt) {
+        nbt.setInteger("button0state", this.button0state);
+        nbt.setInteger("button1state", this.button1state);
+        nbt.setInteger("button2state", this.button2state);
+        nbt.setInteger("button3state", this.button3state);
+        nbt.setInteger("button4state", this.button4state);
+        nbt.setInteger("button5state", this.button5state);
+        nbt.setInteger("button6state", this.button6state);
+        nbt.setInteger("button7state", this.button7state);
+        nbt.setInteger("button8state", this.button8state);
+        nbt.setString("button0text", this.button0text);
+        nbt.setString("button1text", this.button1text);
+        nbt.setString("button2text", this.button2text);
+        nbt.setString("button3text", this.button3text);
+        nbt.setString("button4text", this.button4text);
+        nbt.setString("button5text", this.button5text);
+        nbt.setString("button6text", this.button6text);
+        nbt.setString("button7text", this.button7text);
+        nbt.setString("button8text", this.button8text);
+        nbt.setInteger("currentPage", this.currentPage);
+        nbt.setInteger("totalPages", this.totalPages);
+        nbt.setString("titletext", this.titletext);
+        return nbt;
+    }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        ITextComponent chat = new TextComponentString(getName());
+        return chat;
+    }
 }

@@ -83,7 +83,6 @@ public class ContainerArmor extends Container
 
 		if (slot < 4)
 		{
-			// Armor stand slots 0..3 are HEAD, CHEST, LEGS and FEET.
 			int playerArmorSlot = getPlayerArmorContainerSlot(slot);
 			if (playerArmorSlot >= 0 && !inventorySlots.get(playerArmorSlot).getHasStack())
 			{
@@ -96,7 +95,6 @@ public class ContainerArmor extends Container
 		}
 		else if (slot < 40)
 		{
-			// Prefer the player's matching armor slot, then the matching stand slot.
 			int standSlot = getStandSlot(armorType);
 			int playerArmorSlot = getPlayerArmorContainerSlot(armorType);
 			if (standSlot >= 0 && playerArmorSlot >= 0 && !inventorySlots.get(playerArmorSlot).getHasStack())
@@ -110,7 +108,6 @@ public class ContainerArmor extends Container
 		}
 		else
 		{
-			// Player armor slots 40..43 transfer to the matching stand slot first.
 			int standSlot = getStandSlot(armorType);
 			if (standSlot >= 0 && !inventorySlots.get(standSlot).getHasStack())
 			{
