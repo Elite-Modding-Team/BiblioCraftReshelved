@@ -5,6 +5,9 @@ language.code=en_US
 // Tab Names
 itemGroup.BiblioCraft=BiblioCraft
 itemGroup.BiblioCraftLights=BiblioCraft Lighting
+itemGroup.bibliowoodboptab=BiblioWoods Biomes O' Plenty
+itemGroup.bibliowoodforestrytab=BiblioWoods Forestry
+itemGroup.bibliowoodnaturatab=BiblioWoods Natura
 item.paneler.panels=Panels:
 
 //Updated localizations for BiblioCraft v2.0
