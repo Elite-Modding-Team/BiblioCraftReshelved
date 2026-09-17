@@ -249,19 +249,14 @@ public class Config
 	
 	public static boolean testBookValidity(ItemStack stack)
 	{
-		// Current fix. Player can name any ItemStack `book` and have it accepted.
-		ItemStack clone = stack.copy();
-		String nameBefore = clone.getDisplayName();
-		clone.clearCustomName();
-		if (!nameBefore.equals(clone.getDisplayName())) {
-			return false;
-		}
 		boolean haveMatch = false;
 		if (stack != ItemStack.EMPTY)
 		{
+			ItemStack uncustomNamedStack = stack.copy();
+			uncustomNamedStack.clearCustomName();
 			//System.out.println(itemName); // turn this off before release
 			String testName = stack.getTranslationKey().toLowerCase();
-			String displayName = stack.getDisplayName().trim().toLowerCase();
+			String displayName = uncustomNamedStack.getDisplayName().trim().toLowerCase();
 			
 			//System.out.println(testName);
 			for (int x=0; x < books.length; x++)

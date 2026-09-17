@@ -30,6 +30,7 @@ public class GuiBiblioTextField extends Gui
     /** Have the current text beign edited on the textbox. */
     private String text = "";
     private int maxStringLength = 32;
+    private int maxStringPixelWidth = Integer.MAX_VALUE;
     private int cursorCounter;
     private boolean enableBackgroundDrawing = true;
 
@@ -86,16 +87,33 @@ public class GuiBiblioTextField extends Gui
      */
     public void setText(String par1Str)
     {
-        if (par1Str.length() > this.maxStringLength)
-        {
-            this.text = par1Str.substring(0, this.maxStringLength);
-        }
-        else
-        {
-            this.text = par1Str;
-        }
-
+        this.text = this.limitText(par1Str);
         this.setCursorPositionEnd();
+    }
+
+    private String limitText(String value)
+    {
+        String limited = value == null ? "" : value;
+        if (limited.length() > this.maxStringLength)
+        {
+            limited = limited.substring(0, this.maxStringLength);
+        }
+        if (this.maxStringPixelWidth != Integer.MAX_VALUE)
+        {
+            limited = this.fontRenderer.trimStringToWidth(limited,
+                    this.maxStringPixelWidth);
+        }
+        return limited;
+    }
+
+    private void limitCurrentText()
+    {
+        this.text = this.limitText(this.text);
+        int textLength = this.text.length();
+        this.cursorPosition = Math.min(this.cursorPosition, textLength);
+        this.selectionEnd = Math.min(this.selectionEnd, textLength);
+        this.lineScrollOffset = Math.min(this.lineScrollOffset, textLength);
+        this.setSelectionPos(this.selectionEnd);
     }
 
     /**
@@ -121,38 +139,27 @@ public class GuiBiblioTextField extends Gui
      */
     public void writeText(String par1Str)
     {
-        String s1 = "";
         String s2 = ChatAllowedCharacters.filterAllowedCharacters(par1Str);
         int i = this.cursorPosition < this.selectionEnd ? this.cursorPosition : this.selectionEnd;
         int j = this.cursorPosition < this.selectionEnd ? this.selectionEnd : this.cursorPosition;
-        int k = this.maxStringLength - this.text.length() - (i - this.selectionEnd);
-        boolean flag = false;
-
-        if (this.text.length() > 0)
+        String before = this.text.substring(0, i);
+        String after = this.text.substring(j);
+        int availableCharacters = Math.max(0, this.maxStringLength - before.length() - after.length());
+        if (s2.length() > availableCharacters)
         {
-            s1 = s1 + this.text.substring(0, i);
+            s2 = s2.substring(0, availableCharacters);
+        }
+        if (this.maxStringPixelWidth != Integer.MAX_VALUE)
+        {
+            int availablePixels = this.maxStringPixelWidth
+                    - this.fontRenderer.getStringWidth(before)
+                    - this.fontRenderer.getStringWidth(after);
+            s2 = availablePixels > 0
+                    ? this.fontRenderer.trimStringToWidth(s2, availablePixels) : "";
         }
 
-        int l;
-
-        if (k < s2.length())
-        {
-            s1 = s1 + s2.substring(0, k);
-            l = k;
-        }
-        else
-        {
-            s1 = s1 + s2;
-            l = s2.length();
-        }
-
-        if (this.text.length() > 0 && j < this.text.length())
-        {
-            s1 = s1 + this.text.substring(j);
-        }
-
-        this.text = s1;
-        this.moveCursorBy(i - this.selectionEnd + l);
+        this.text = before + s2 + after;
+        this.setCursorPosition(before.length() + s2.length());
     }
 
     /**
@@ -525,7 +532,7 @@ public class GuiBiblioTextField extends Gui
                 //this.fontRenderer.dr
             }
 
-            boolean flag2 = this.cursorPosition < this.text.length() || this.text.length() >= this.getMaxStringLength();
+            boolean flag2 = this.cursorPosition < this.text.length() || this.isTextAtMaximumLength();
             int k1 = j1;
 
             if (!flag)
@@ -601,7 +608,7 @@ public class GuiBiblioTextField extends Gui
 
         if (drawCursor)
         {
-            if (this.cursorPosition < this.text.length() || this.text.length() >= this.getMaxStringLength())
+            if (this.cursorPosition < this.text.length() || this.isTextAtMaximumLength())
             {
                 Gui.drawRect(cursorX - 1, textY - 1, cursorX + 1,
                         textY + 1 + this.fontRenderer.FONT_HEIGHT, -3092272);
@@ -659,15 +666,21 @@ public class GuiBiblioTextField extends Gui
 
     public void setMaxStringLength(int par1)
     {
-        this.maxStringLength = par1;
-       // System.out.println(formcount);
-        if ((this.text.length()) > par1)
-        {
-            this.text = this.text.substring(0, par1);
-            this.cursorPosition = Math.min(this.cursorPosition, this.text.length());
-            this.selectionEnd = Math.min(this.selectionEnd, this.text.length());
-            this.lineScrollOffset = Math.min(this.lineScrollOffset, this.text.length());
-        }
+        this.maxStringLength = Math.max(0, par1);
+        this.limitCurrentText();
+    }
+
+    public void setMaxStringPixelWidth(int width)
+    {
+        this.maxStringPixelWidth = Math.max(0, width);
+        this.limitCurrentText();
+    }
+
+    private boolean isTextAtMaximumLength()
+    {
+        return this.text.length() >= this.maxStringLength
+                || (this.maxStringPixelWidth != Integer.MAX_VALUE
+                && this.fontRenderer.getStringWidth(this.text) >= this.maxStringPixelWidth);
     }
 
     /**

@@ -308,6 +308,12 @@ public abstract class TileEntityBiblioRenderer extends TileEntitySpecialRenderer
 	
 	public void renderText(String text, double xAdjust, double yAdjust, double zAdjust)
 	{
+		renderText(text, xAdjust, yAdjust, zAdjust, 1.0F);
+	}
+
+	protected void renderText(String text, double xAdjust, double yAdjust, double zAdjust,
+			float textScale)
+	{
 		FontRenderer fontRender = this.getFontRenderer();
 		float offsetx = 0.0f;
 		float offsetz = 0.0f;
@@ -320,41 +326,49 @@ public abstract class TileEntityBiblioRenderer extends TileEntitySpecialRenderer
 			default: break;
 		}
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(this.globalX + 0.5 + offsetx, this.globalY, this.globalZ + 0.5 + offsetz);
-		
-		switch (this.getAngle())
+		try
 		{
-			case SOUTH:{GlStateManager.rotate(180, 0.0f, 1.0f, 0.0f); break; } 
-			case WEST:{GlStateManager.rotate(90, 0.0f, 1.0f, 0.0f); break; } 
-			case EAST:{GlStateManager.rotate(-90, 0.0f, 1.0f, 0.0f); break;} 
-			default: break;
+			GlStateManager.translate(this.globalX + 0.5 + offsetx, this.globalY, this.globalZ + 0.5 + offsetz);
+
+			switch (this.getAngle())
+			{
+				case SOUTH:{GlStateManager.rotate(180, 0.0f, 1.0f, 0.0f); break; }
+				case WEST:{GlStateManager.rotate(90, 0.0f, 1.0f, 0.0f); break; }
+				case EAST:{GlStateManager.rotate(-90, 0.0f, 1.0f, 0.0f); break;}
+				default: break;
+			}
+
+			GlStateManager.translate(-0.5 + xAdjust, yAdjust, zAdjust);
+			GlStateManager.depthMask(false);
+			GlStateManager.scale(ClipboardTextLayout.MODEL_TEXT_SCALE,
+					ClipboardTextLayout.MODEL_TEXT_SCALE, ClipboardTextLayout.MODEL_TEXT_SCALE);
+			GlStateManager.rotate(270, 0.0F, 1.0F, 0.0F);
+			GlStateManager.rotate(180, 0.0F, 0.0F, 1.0F);
+			switch (this.shift)
+			{
+				case HALF_SHIFT:
+				{
+					GlStateManager.translate(0.0, 0.0, -95.0);
+					break;
+				}
+				case FULL_SHIFT:
+				{
+					GlStateManager.translate(0.0, 0.0, -205.0);
+					break;
+				}
+				default: break;
+			}
+			additionalGLStuffForText();
+			GlStateManager.scale(textScale, textScale, textScale);
+            GlStateManager.glNormal3f(0.0F, 0.0F, -0.010416667F);
+			fontRender.drawString(text, 0, 0, 0);
 		}
-		
-		GlStateManager.translate(-0.5 + xAdjust, yAdjust, zAdjust);
-		GlStateManager.depthMask(false);
-		GlStateManager.scale(0.0045F, 0.0045F, 0.0045F);
-		GlStateManager.rotate(270, 0.0F, 1.0F, 0.0F);
-		GlStateManager.rotate(180, 0.0F, 0.0F, 1.0F);
-		switch (this.shift)
+		finally
 		{
-			case HALF_SHIFT:
-			{
-				GlStateManager.translate(0.0, 0.0, -95.0);
-				break;
-			}
-			case FULL_SHIFT:
-			{
-				GlStateManager.translate(0.0, 0.0, -205.0);
-				break;
-			}
-			default: break;
+			GlStateManager.depthMask(true);
+			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+			GlStateManager.popMatrix();
 		}
-		additionalGLStuffForText();
-        GlStateManager.glNormal3f(0.0F, 0.0F, -0.010416667F);
-		fontRender.drawString(text, 0, 0, 0); 
-		GlStateManager.depthMask(true);
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-		GlStateManager.popMatrix();
 	}
 	
 	public void additionalGLStuffForText()

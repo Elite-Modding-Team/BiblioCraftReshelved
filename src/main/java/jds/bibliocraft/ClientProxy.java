@@ -43,6 +43,7 @@ public class ClientProxy extends CommonProxy
 			if (Config.enableClipboard)
 			{
 				ClientRegistry.bindTileEntitySpecialRenderer(TileEntityClipboard.class, new TileEntityClipboardRenderer());
+				ItemClipboard.instance.setTileEntityItemStackRenderer(new ClipboardItemStackRenderer());
 				MinecraftForge.EVENT_BUS.register(new RenderClipboardText());
 			}
 			if (Config.enableFurniturePaneler){

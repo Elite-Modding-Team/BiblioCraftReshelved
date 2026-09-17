@@ -3,6 +3,7 @@ package jds.bibliocraft.gui;
 import jds.bibliocraft.network.BiblioNetworking;
 import jds.bibliocraft.network.packet.server.BiblioMCBEdit;
 import jds.bibliocraft.network.packet.server.BiblioUpdateInv;
+import jds.bibliocraft.rendering.ClipboardTextLayout;
 import jds.bibliocraft.tileentities.TileEntityClipboard;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -100,9 +101,10 @@ public class GuiClipboard extends GuiScreen
     		//System.out.println(currentPage);
     		String pagenum = "page"+currentPage;
     		NBTTagCompound pagetag = cliptags.getCompoundTag(pagenum);
-    		if (pagetag != null)
-    		{
-    			int[] taskstat = pagetag.getIntArray("taskStates");
+			if (pagetag != null)
+			{
+				ClipboardTextLayout textLayout = ClipboardTextLayout.fromPage(pagetag);
+				int[] taskstat = pagetag.getIntArray("taskStates");
     			//System.out.println(taskstat.length);
      		button0state = taskstat.length > 0 ? taskstat[0] : 0;
      		button1state = taskstat.length > 1 ? taskstat[1] : 0;
@@ -113,17 +115,16 @@ public class GuiClipboard extends GuiScreen
      		button6state = taskstat.length > 6 ? taskstat[6] : 0;
      		button7state = taskstat.length > 7 ? taskstat[7] : 0;
      		button8state = taskstat.length > 8 ? taskstat[8] : 0;
-    			NBTTagCompound tasks = pagetag.getCompoundTag("tasks");
-    			button0text = tasks.getString("task1");
-    			button1text = tasks.getString("task2");
-    			button2text = tasks.getString("task3");
-    			button3text = tasks.getString("task4");
-    			button4text = tasks.getString("task5");
-    			button5text = tasks.getString("task6");
-    			button6text = tasks.getString("task7");
-    			button7text = tasks.getString("task8");
-    			button8text = tasks.getString("task9");
-    			titletext = pagetag.getString("title");
+				button0text = textLayout.getTask(0);
+				button1text = textLayout.getTask(1);
+				button2text = textLayout.getTask(2);
+				button3text = textLayout.getTask(3);
+				button4text = textLayout.getTask(4);
+				button5text = textLayout.getTask(5);
+				button6text = textLayout.getTask(6);
+				button7text = textLayout.getTask(7);
+				button8text = textLayout.getTask(8);
+				titletext = textLayout.getTitle();
 
     		}
     	}
@@ -139,7 +140,6 @@ public class GuiClipboard extends GuiScreen
     	Keyboard.enableRepeatEvents(true);
     	int var5 = (this.width - this.bookImageWidth) / 2;
     	int sidex = (this.width/2) - 64;
-    	int sidex2 = sidex + 12;
     	buttonList.add(new GuiButtonClipboard(0, sidex, 27, 10, 10, "", true));
     	buttonList.add(new GuiButtonClipboard(1, sidex, 42, 10, 10, "", true));
     	buttonList.add(new GuiButtonClipboard(2, sidex, 57, 10, 10, "", true));
@@ -150,16 +150,16 @@ public class GuiClipboard extends GuiScreen
     	buttonList.add(new GuiButtonClipboard(7, sidex, 132, 10, 10, "", true));
     	buttonList.add(new GuiButtonClipboard(8, sidex, 147, 10, 10, "", true));
     	
-    	this.textField0 = new GuiBiblioTextField(this.fontRenderer, sidex2, 29, 115, 10);
-    	this.textField1 = new GuiBiblioTextField(this.fontRenderer, sidex2, 44, 115, 10);
-    	this.textField2 = new GuiBiblioTextField(this.fontRenderer, sidex2, 59, 115, 10);
-    	this.textField3 = new GuiBiblioTextField(this.fontRenderer, sidex2, 74, 115, 10);
-    	this.textField4 = new GuiBiblioTextField(this.fontRenderer, sidex2, 89, 115, 10);
-    	this.textField5 = new GuiBiblioTextField(this.fontRenderer, sidex2, 104, 115, 10);
-    	this.textField6 = new GuiBiblioTextField(this.fontRenderer, sidex2, 119, 115, 10);
-    	this.textField7 = new GuiBiblioTextField(this.fontRenderer, sidex2, 134, 115, 10);
-    	this.textField8 = new GuiBiblioTextField(this.fontRenderer, sidex2, 149, 115, 10);
-    	this.textFieldTitle = new GuiBiblioTextField(this.fontRenderer, sidex2-10, 14, 125, 10);
+		this.textField0 = new GuiBiblioTextField(this.fontRenderer, var5 + ClipboardTextLayout.GUI_TASK_X, ClipboardTextLayout.getGuiTaskY(0), ClipboardTextLayout.GUI_TASK_WIDTH, 10);
+		this.textField1 = new GuiBiblioTextField(this.fontRenderer, var5 + ClipboardTextLayout.GUI_TASK_X, ClipboardTextLayout.getGuiTaskY(1), ClipboardTextLayout.GUI_TASK_WIDTH, 10);
+		this.textField2 = new GuiBiblioTextField(this.fontRenderer, var5 + ClipboardTextLayout.GUI_TASK_X, ClipboardTextLayout.getGuiTaskY(2), ClipboardTextLayout.GUI_TASK_WIDTH, 10);
+		this.textField3 = new GuiBiblioTextField(this.fontRenderer, var5 + ClipboardTextLayout.GUI_TASK_X, ClipboardTextLayout.getGuiTaskY(3), ClipboardTextLayout.GUI_TASK_WIDTH, 10);
+		this.textField4 = new GuiBiblioTextField(this.fontRenderer, var5 + ClipboardTextLayout.GUI_TASK_X, ClipboardTextLayout.getGuiTaskY(4), ClipboardTextLayout.GUI_TASK_WIDTH, 10);
+		this.textField5 = new GuiBiblioTextField(this.fontRenderer, var5 + ClipboardTextLayout.GUI_TASK_X, ClipboardTextLayout.getGuiTaskY(5), ClipboardTextLayout.GUI_TASK_WIDTH, 10);
+		this.textField6 = new GuiBiblioTextField(this.fontRenderer, var5 + ClipboardTextLayout.GUI_TASK_X, ClipboardTextLayout.getGuiTaskY(6), ClipboardTextLayout.GUI_TASK_WIDTH, 10);
+		this.textField7 = new GuiBiblioTextField(this.fontRenderer, var5 + ClipboardTextLayout.GUI_TASK_X, ClipboardTextLayout.getGuiTaskY(7), ClipboardTextLayout.GUI_TASK_WIDTH, 10);
+		this.textField8 = new GuiBiblioTextField(this.fontRenderer, var5 + ClipboardTextLayout.GUI_TASK_X, ClipboardTextLayout.getGuiTaskY(8), ClipboardTextLayout.GUI_TASK_WIDTH, 10);
+		this.textFieldTitle = new GuiBiblioTextField(this.fontRenderer, var5 + ClipboardTextLayout.GUI_TITLE_X, ClipboardTextLayout.GUI_TITLE_Y, ClipboardTextLayout.GUI_TITLE_WIDTH, 10);
 
     	this.textField0.setEnableBackgroundDrawing(false);
     	this.textField1.setEnableBackgroundDrawing(false);
@@ -180,19 +180,22 @@ public class GuiClipboard extends GuiScreen
     	this.textField5.setTextColor(0x404040);
     	this.textField6.setTextColor(0x404040);
     	this.textField7.setTextColor(0x404040);
-    	this.textField8.setTextColor(0x404040);
-    	this.textFieldTitle.setTextColor(0x404040);
+	    this.textField8.setTextColor(0x404040);
+	    this.textFieldTitle.setTextColor(0x404040);
+
+	    this.textFieldTitle.setMaxStringLength(Integer.MAX_VALUE);
+	    this.textFieldTitle.setMaxStringPixelWidth(this.textFieldTitle.getWidth());
     	
-    	this.textField0.setText(button0text);
+	    this.textField0.setText(button0text);
     	this.textField1.setText(button1text);
     	this.textField2.setText(button2text);
     	this.textField3.setText(button3text);
     	this.textField4.setText(button4text);
     	this.textField5.setText(button5text);
     	this.textField6.setText(button6text);
-    	this.textField7.setText(button7text);
-    	this.textField8.setText(button8text);
-    	this.textFieldTitle.setText(titletext);
+	    this.textField7.setText(button7text);
+	    this.textField8.setText(button8text);
+	    this.textFieldTitle.setText(titletext);
     	
     	this.textField0.setMaxStringLength(fieldCharLimit);
     	this.textField1.setMaxStringLength(fieldCharLimit);
@@ -203,7 +206,6 @@ public class GuiClipboard extends GuiScreen
     	this.textField6.setMaxStringLength(fieldCharLimit);
     	this.textField7.setMaxStringLength(fieldCharLimit);
     	this.textField8.setMaxStringLength(fieldCharLimit);
-    	this.textFieldTitle.setMaxStringLength(26);
     	//buttonList.add(new GuiTextField(fontRenderer, sidex2, 27, 109, 10));
     	// I also need to render the current page number at the bottom in the center of the page
         int var1 = (this.width - this.bookImageWidth) / 2;
@@ -481,7 +483,7 @@ public class GuiClipboard extends GuiScreen
     			tasks.setString("task7", textField6.getText());
     			tasks.setString("task8", textField7.getText());
     			tasks.setString("task9", textField8.getText());
-    			pagetag.setString("title", textFieldTitle.getText());
+			pagetag.setString("title", textFieldTitle.getText());
     			pagetag.setTag("tasks", tasks);
     			cliptags.setTag(pagenum, pagetag);
     			clipStack.setTagCompound(cliptags);

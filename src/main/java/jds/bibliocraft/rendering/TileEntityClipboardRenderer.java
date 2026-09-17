@@ -5,24 +5,25 @@ import jds.bibliocraft.tileentities.TileEntityClipboard;
 
 public class TileEntityClipboardRenderer extends TileEntityBiblioRenderer
 {
-    private double textSpacing = -0.0658;
-
 	@Override
 	public void render(BiblioTileEntity tileEntity, double x, double y, double z, float tick)
 	{
 		TileEntityClipboard tile = (TileEntityClipboard)tileEntity;
 		if (tile != null)
 		{
-			renderText(tile.titletext, 0.037, 0.825, 0.27); 
-			renderText(tile.button0text, 0.037, 0.76, 0.222);
-			renderText(tile.button1text, 0.037, 0.76+(1*textSpacing), 0.222);
-			renderText(tile.button2text, 0.037, 0.76+(2*textSpacing), 0.222);
-			renderText(tile.button3text, 0.037, 0.76+(3*textSpacing), 0.222);
-			renderText(tile.button4text, 0.037, 0.76+(4*textSpacing), 0.222);
-			renderText(tile.button5text, 0.037, 0.76+(5*textSpacing), 0.222);
-			renderText(tile.button6text, 0.037, 0.76+(6*textSpacing), 0.222);
-			renderText(tile.button7text, 0.037, 0.76+(7*textSpacing), 0.222);
-			renderText(tile.button8text, 0.037, 0.76+(8*textSpacing), 0.222);
+			ClipboardTextLayout textLayout = ClipboardTextLayout.fromText(tile.titletext,
+					tile.button0text, tile.button1text, tile.button2text, tile.button3text,
+					tile.button4text, tile.button5text, tile.button6text, tile.button7text,
+					tile.button8text);
+			for (int row = 0; row < ClipboardTextLayout.ROW_COUNT; row++)
+			{
+				String text = textLayout.getText(row);
+				int textWidth = getFontRenderer().getStringWidth(text);
+				float textScale = ClipboardTextLayout.getDisplayScale(row, textWidth);
+				renderText(text, ClipboardTextLayout.MODEL_TEXT_X,
+						textLayout.getModelY(row), textLayout.getModelZ(row,
+								textWidth * (double)textScale), textScale);
+			}
 			String pageNum = ""+tile.currentPage;
 			if (tile.currentPage > 9)
 			{

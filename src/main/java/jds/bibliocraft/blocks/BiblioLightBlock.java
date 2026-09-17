@@ -114,22 +114,47 @@ public abstract class BiblioLightBlock extends BiblioBlock
 	@Override
 	public void additionalPlacementCommands(BiblioTileEntity biblioTile, EntityLivingBase player) 
 	{
-	     int pitch = MathHelper.floor(player.rotationPitch * 3.0F / 180.0F + 0.5D) & 3;
-	     ++pitch;
-	     pitch %= 4;
-	     if (pitch == 0)
-	     {
-	    	 biblioTile.setVertPosition(EnumVertPosition.CEILING);
-	     }
-	     else if (pitch == 1)
-	     {
-	    	 biblioTile.setVertPosition(EnumVertPosition.WALL);
-	     }
-	     else
-	     {
-	    	 biblioTile.setVertPosition(EnumVertPosition.FLOOR);
-	     }
-	     additionalLightPlacmentCommands(biblioTile);
+		setVerticalPositionFromPitch(biblioTile, player);
+		additionalLightPlacmentCommands(biblioTile);
+	}
+
+	@Override
+	public void additionalPlacementCommands(BiblioTileEntity biblioTile, EntityLivingBase player,
+			EnumFacing placementFacing)
+	{
+		if (placementFacing == null)
+		{
+			setVerticalPositionFromPitch(biblioTile, player);
+		}
+		else if (placementFacing.getAxis() == EnumFacing.Axis.Y)
+		{
+			biblioTile.setVertPosition(placementFacing == EnumFacing.UP
+					? EnumVertPosition.FLOOR : EnumVertPosition.CEILING);
+		}
+		else
+		{
+			biblioTile.setVertPosition(EnumVertPosition.WALL);
+		}
+		additionalLightPlacmentCommands(biblioTile);
+	}
+
+	private void setVerticalPositionFromPitch(BiblioTileEntity biblioTile, EntityLivingBase player)
+	{
+		int pitch = MathHelper.floor(player.rotationPitch * 3.0F / 180.0F + 0.5D) & 3;
+		++pitch;
+		pitch %= 4;
+		if (pitch == 0)
+		{
+			biblioTile.setVertPosition(EnumVertPosition.CEILING);
+		}
+		else if (pitch == 1)
+		{
+			biblioTile.setVertPosition(EnumVertPosition.WALL);
+		}
+		else
+		{
+			biblioTile.setVertPosition(EnumVertPosition.FLOOR);
+		}
 	}
 	
 	public abstract void additionalLightPlacmentCommands(BiblioTileEntity biblioTile);

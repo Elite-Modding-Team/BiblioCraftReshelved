@@ -19,16 +19,7 @@ public class SlotBook extends Slot
 	@Override
 	public boolean isItemValid(ItemStack stack)
 	{
-		
-		if (Config.testBookValidity(stack))
-		{
-			
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return !Config.isBlock(stack) && Config.testBookValidity(stack);
 	}
 	
 	@Override

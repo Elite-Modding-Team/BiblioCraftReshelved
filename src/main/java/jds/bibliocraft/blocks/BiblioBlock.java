@@ -53,6 +53,8 @@ import java.util.Random;
 
 public abstract class BiblioBlock extends BlockContainer 
 {
+	private final ThreadLocal<EnumFacing> pendingPlacementFacing = new ThreadLocal<EnumFacing>();
+
 	//private boolean hasCustomWoods = false;
 	
 	private String customTexture = "none";
@@ -316,8 +318,8 @@ public abstract class BiblioBlock extends BlockContainer
         super.addCollisionBoxesToList(world, pos, state, mask, list, collidingEntity);
 	}
     */ 
-    public EnumFacing getFacing(int angle)
-    {
+	public EnumFacing getFacing(int angle)
+	{
     	EnumFacing face = EnumFacing.WEST;
     	switch (angle)
     	{
@@ -325,13 +327,23 @@ public abstract class BiblioBlock extends BlockContainer
 	    	case 2:{ face = EnumFacing.NORTH; break; }
 	    	case 3:{ face = EnumFacing.EAST; break; }
     	}
-    	return face;
-    }
+		return face;
+	}
+
+	@Override
+	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing,
+			float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand)
+	{
+		pendingPlacementFacing.set(facing);
+		return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand);
+	}
     
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase player, ItemStack itemStack)
     {
-    	TileEntity tile = world.getTileEntity(pos);
+		EnumFacing placementFacing = pendingPlacementFacing.get();
+		pendingPlacementFacing.remove();
+		TileEntity tile = world.getTileEntity(pos);
     	if (tile != null && tile instanceof BiblioTileEntity)
     	{
 	        int angle = MathHelper.floor(player.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
@@ -354,12 +366,18 @@ public abstract class BiblioBlock extends BlockContainer
 	        	}
 	        	
 	        }
-	        additionalPlacementCommands(biblioTile, player);
-    	}
+			additionalPlacementCommands(biblioTile, player, placementFacing);
+		}
     }
     
     /** Called when the block is placed  */
     public abstract void additionalPlacementCommands(BiblioTileEntity biblioTile, EntityLivingBase player);
+
+	public void additionalPlacementCommands(BiblioTileEntity biblioTile, EntityLivingBase player,
+			EnumFacing placementFacing)
+	{
+		additionalPlacementCommands(biblioTile, player);
+	}
     
 	@Override
 	public void breakBlock(World world, BlockPos pos, IBlockState state)

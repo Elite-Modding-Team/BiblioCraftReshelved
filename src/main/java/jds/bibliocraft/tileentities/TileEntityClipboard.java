@@ -237,7 +237,10 @@ public class TileEntityClipboard extends BiblioTileEntity
 	@Override
 	public void setInventorySlotContentsAdditionalCommands(int slot, ItemStack stack) 
 	{
-
+		if (slot == 0)
+		{
+			getNBTData();
+		}
 	}
 
 	@Override
