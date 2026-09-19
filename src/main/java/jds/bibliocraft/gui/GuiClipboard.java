@@ -1,5 +1,6 @@
 package jds.bibliocraft.gui;
 
+import jds.bibliocraft.Config;
 import jds.bibliocraft.network.BiblioNetworking;
 import jds.bibliocraft.network.packet.server.BiblioMCBEdit;
 import jds.bibliocraft.network.packet.server.BiblioUpdateInv;
@@ -80,6 +81,12 @@ public class GuiClipboard extends GuiScreen {
             tiley = ty;
             tilez = tz;
         }
+    }
+
+    @Override
+    public boolean doesGuiPauseGame()
+    {
+        return Config.enableClipboardInterfacePausing;
     }
 
     // fontRenderer fr;
