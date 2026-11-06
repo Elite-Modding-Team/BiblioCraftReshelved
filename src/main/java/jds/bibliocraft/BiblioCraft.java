@@ -2,6 +2,7 @@ package jds.bibliocraft;
 
 import jds.bibliocraft.bibliowoods.bop.BiblioWoodsBoP;
 import jds.bibliocraft.bibliowoods.botania.BiblioWoodsBotania;
+import jds.bibliocraft.bibliowoods.extrabiometravels.BiblioWoodsEBT;
 import jds.bibliocraft.bibliowoods.forestry.BiblioWoodsForestry;
 import jds.bibliocraft.bibliowoods.natura.BiblioWoodsNatura;
 import jds.bibliocraft.enchantments.EnchantmentDeathCompass;
@@ -171,7 +172,8 @@ public class BiblioCraft
 				BiblioWoodsForestry.init();
 			if (Config.enableBiblioWoodsNatura)
 				BiblioWoodsNatura.init();
-
+			if (Config.enableBiblioWoodsEBT)
+				BiblioWoodsEBT.init();
 			ItemLoader.addRecipies(event);
 		}
 		
@@ -183,12 +185,12 @@ public class BiblioCraft
 				deathCompassEnch = new EnchantmentDeathCompass();
 			if (readingEnch == null)
 				readingEnch = new EnchantmentReading();
-			if (Config.enableAtlas && Config.enableDeathCompass){
+			if (Config.enableAtlas && Config.enableDeathCompass) {
 				event.getRegistry().register(deathCompassEnch);	
-				}		
-			if (Config.enableReadingglasses){
+			}
+			if (Config.enableReadingglasses) {
 				event.getRegistry().register(readingEnch);	
-				}		
+			}
 		}
 
 		@SubscribeEvent
