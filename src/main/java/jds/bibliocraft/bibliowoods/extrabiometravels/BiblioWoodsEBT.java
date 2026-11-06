@@ -20,24 +20,48 @@ public class BiblioWoodsEBT {
 
     public static void init()
     {
-        LOGGER.info("ebt is farting!!!!!");
+
 
         if (Loader.isModLoaded("ebt"))
         {
 
-            Block planks1 = Block.REGISTRY.getObject(new ResourceLocation("natura:overworld_planks"));
-            Block planks2 = Block.REGISTRY.getObject(new ResourceLocation("natura:nether_planks"));
-            Block slabs1 = Block.REGISTRY.getObject(new ResourceLocation("natura:overworld_slab"));
-            Block slabs2 = Block.REGISTRY.getObject(new ResourceLocation("natura:overworld_slab2"));
-            Block slabs3 = Block.REGISTRY.getObject(new ResourceLocation("natura:nether_slab"));
+            Block[] EBTPlanks =  {
+                    Block.REGISTRY.getObject(new ResourceLocation("ebt:autumnal_planks")),
+                    Block.REGISTRY.getObject(new ResourceLocation("ebt:bald_cypress_planks")),
+                    Block.REGISTRY.getObject(new ResourceLocation("ebt:cypress_planks")),
+                    Block.REGISTRY.getObject(new ResourceLocation("ebt:douglas_fir_planks")),
+                    Block.REGISTRY.getObject(new ResourceLocation("ebt:japanese_maple_planks")),
+                    Block.REGISTRY.getObject(new ResourceLocation("ebt:peach_sakura_planks")),
+                    Block.REGISTRY.getObject(new ResourceLocation("ebt:rainbow_eucalyptus_planks")),
+                    Block.REGISTRY.getObject(new ResourceLocation("ebt:scalewood_planks")),
+                    Block.REGISTRY.getObject(new ResourceLocation("ebt:wattle_planks")),
+                    Block.REGISTRY.getObject(new ResourceLocation("ebt:white_fir_planks"))
+            };
 
-            if (planks1 == null || planks2 == null || slabs1 == null || slabs2 == null || slabs3 == null) return;
+            Block[] EBTSlabs =  {
+                    Block.REGISTRY.getObject(new ResourceLocation("ebt:autumnal_slab")),
+                    Block.REGISTRY.getObject(new ResourceLocation("ebt:bald_cypress_slab")),
+                    Block.REGISTRY.getObject(new ResourceLocation("ebt:cypress_slab")),
+                    Block.REGISTRY.getObject(new ResourceLocation("ebt:douglas_fir_slab")),
+                    Block.REGISTRY.getObject(new ResourceLocation("ebt:japanese_maple_slab")),
+                    Block.REGISTRY.getObject(new ResourceLocation("ebt:peach_sakura_slab")),
+                    Block.REGISTRY.getObject(new ResourceLocation("ebt:rainbow_eucalyptus_slab")),
+                    Block.REGISTRY.getObject(new ResourceLocation("ebt:scalewood_slab")),
+                    Block.REGISTRY.getObject(new ResourceLocation("ebt:wattle_slab")),
+                    Block.REGISTRY.getObject(new ResourceLocation("ebt:white_fir_slab"))
+            };
 
+            //if (planks1 == null || planks2 == null || slabs1 == null || slabs2 == null || slabs3 == null) return;
+
+            for (int i = 0; i < EBTPlanks.length; i++)
+                if (EBTPlanks[i] == null || EBTSlabs[i] == null) return;
+
+            /*
             Block[] planks = {planks1, planks1, planks1, planks1, planks1, planks1, planks1, planks1, planks1, planks2, planks2, planks2, planks2};
             int[] plankID = {0,1,2,3,4,5,6,7,8,0,1,2,3};
             Block[] slabs = {slabs1, slabs1, slabs1, slabs1, slabs1, slabs2, slabs2, slabs2, slabs2, slabs3, slabs3, slabs3, slabs3};
             int[] slabID = {0,1,2,3,4,0,1,2,3,0,1,2,3};
-
+            */
             String[] textures = {
                     "ebt:blocks/autumnal_planks",
                     "ebt:blocks/bald_cypress_planks",
@@ -59,7 +83,7 @@ public class BiblioWoodsEBT {
             for (int i = 0; i < textures.length; i++)
             {
                 RegisterCustomFramedBlocks reg = new RegisterCustomFramedBlocks(textures[i]);
-                reg.registerRecipies(new ItemStack(planks[i], 1, plankID[i]), new ItemStack(slabs[i], 1, slabID[i]));
+                reg.registerRecipies(new ItemStack(EBTPlanks[i], 1), new ItemStack(EBTSlabs[i], 1));
             }
 
         }
