@@ -89,6 +89,7 @@ public class Config
 	
 	public static boolean enableBiblioWoodsForestry;
 	public static boolean enableBiblioWoodsNatura;
+	public static boolean enableBiblioWoodsEBT;
 	public static boolean enableBiblioWoodsBotania;
 	public static boolean enableBiblioWoodsBoP;
 	public static boolean enableClipboardInterfacePausing;
@@ -165,6 +166,7 @@ public class Config
 		bConfig.addCustomCategoryComment("BiblioWoods", "Here you can enable or disable BiblioWoods compatibility with other mods. Change value to false to disable compatibility with the selected mod.");
 		enableBiblioWoodsForestry = bConfig.get("BiblioWoods", "EnableForestry", true, "Enable BiblioWoods compatibility with Forestry. Requires restart.").getBoolean(true);
 		enableBiblioWoodsNatura = bConfig.get("BiblioWoods", "EnableNatura", true, "Enable BiblioWoods compatibility with Natura. Requires restart.").getBoolean(true);
+		enableBiblioWoodsEBT = bConfig.get("BiblioWoods", "EnableExtraBiomeTravels", true, "Enable BiblioWoods compatibility with Extra Biome Travels. Requires restart.").getBoolean(true);
 		enableBiblioWoodsBotania = bConfig.get("BiblioWoods", "EnableBotania", true, "Enable BiblioWoods compatibility with Botania. Requires restart.").getBoolean(true);
 		enableBiblioWoodsBoP = bConfig.get("BiblioWoods", "EnableBiomesOPlenty", true, "Enable BiblioWoods compatibility with Biomes O' Plenty. Requires restart.").getBoolean(true);
 
