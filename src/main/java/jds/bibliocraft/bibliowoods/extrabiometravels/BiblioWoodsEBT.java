@@ -1,12 +1,8 @@
 package jds.bibliocraft.bibliowoods.extrabiometravels;
 
-import jds.bibliocraft.blocks.BlockBookcase;
-import jds.bibliocraft.helpers.BiblioWoodHelperTab;
-import jds.bibliocraft.helpers.RegisterCustomFramedBlocks;
+import jds.bibliocraft.helpers.BiblioWoodsHelper;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 
@@ -51,17 +47,11 @@ public class BiblioWoodsEBT {
                     Block.REGISTRY.getObject(new ResourceLocation("ebt:white_fir_slab"))
             };
 
+
+
             //if (planks1 == null || planks2 == null || slabs1 == null || slabs2 == null || slabs3 == null) return;
 
-            for (int i = 0; i < EBTPlanks.length; i++)
-                if (EBTPlanks[i] == null || EBTSlabs[i] == null) return;
 
-            /*
-            Block[] planks = {planks1, planks1, planks1, planks1, planks1, planks1, planks1, planks1, planks1, planks2, planks2, planks2, planks2};
-            int[] plankID = {0,1,2,3,4,5,6,7,8,0,1,2,3};
-            Block[] slabs = {slabs1, slabs1, slabs1, slabs1, slabs1, slabs2, slabs2, slabs2, slabs2, slabs3, slabs3, slabs3, slabs3};
-            int[] slabID = {0,1,2,3,4,0,1,2,3,0,1,2,3};
-            */
             String[] textures = {
                     "ebt:blocks/autumnal_planks",
                     "ebt:blocks/bald_cypress_planks",
@@ -75,16 +65,9 @@ public class BiblioWoodsEBT {
                     "ebt:blocks/white_fir_planks",
             };
 
-            ItemStack icon = new ItemStack(BlockBookcase.instance, 1, 6);
-            NBTTagCompound tags = new NBTTagCompound();
-            tags.setString("renderTexture", "ebt:blocks/autumnal_planks");
-            icon.setTagCompound(tags);
-            creativeTab = new BiblioWoodHelperTab("bibliowoodebttab", textures, icon);
-            for (int i = 0; i < textures.length; i++)
-            {
-                RegisterCustomFramedBlocks reg = new RegisterCustomFramedBlocks(textures[i]);
-                reg.registerRecipies(new ItemStack(EBTPlanks[i], 1), new ItemStack(EBTSlabs[i], 1));
-            }
+
+            new BiblioWoodsHelper(EBTPlanks, EBTSlabs, textures, "bibliowoodebttab", 0);
+
 
         }
     }
