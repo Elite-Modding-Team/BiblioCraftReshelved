@@ -41,7 +41,7 @@ public class BiblioWoodsHelper {
         NBTTagCompound tags = new NBTTagCompound();
         tags.setString("renderTexture", ModTextures[CreativeTabTexture]);
         icon.setTagCompound(tags);
-        creativeTab = new BiblioWoodHelperTab("bibliowoodebttab", ModTextures, icon);
+        creativeTab = new BiblioWoodHelperTab(CreativeTabName, ModTextures, icon);
         for (int i = 0; i < ModTextures.length; i++)
         {
             RegisterCustomFramedBlocks reg = new RegisterCustomFramedBlocks(ModTextures[i]);
